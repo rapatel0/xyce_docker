@@ -19,6 +19,13 @@ CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1
 
 EXPOSE 5901
 
+
+# ---------------------------------------------
+# Everything after here is related to xyce install
+# 
+
+
+# Xyce install prerequisites
 RUN apt-get update && \
     apt-get install -y build-essential && \
     apt-get install -y gcc && \
@@ -34,6 +41,12 @@ RUN apt-get update && \
     apt-get install -y liblapack-dev && \
     apt-get install -y libtool && \
     apt-get install -y libopenmpi-dev && \
-    apt-get install -y libscotchparmetis-dev
+    apt-get install -y libscotchparmetis-dev && \
+    apt-get install -y git 
 
 
+# Trilinos source install 
+RUN mkdir trilinos_src && \
+    cd trilinos_src && \
+    git clone -b trilinos-release-12-6-branch --single-branch https://github.com/trilinos/Trilinos.git .
+ 
