@@ -1,0 +1,2 @@
+Xyce-6.6.tar.gz filter=lfs diff=lfs merge=lfs -text
+Xyce_Docs-6.6.tar.gz filter=lfs diff=lfs merge=lfs -text

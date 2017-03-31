@@ -27,26 +27,56 @@ EXPOSE 5901
 
 # Xyce install prerequisites
 RUN apt-get update && \
-    apt-get install -y build-essential && \
-    apt-get install -y gcc && \
-    apt-get install -y g++ && \
-    apt-get install -y gfortran && \
-    apt-get install -y make && \
-    apt-get install -y cmake && \
-    apt-get install -y bison && \
-    apt-get install -y flex && \
-    apt-get install -y libfftw3-dev && \
-    apt-get install -y libsuitesparse-dev && \
-    apt-get install -y libblas-dev && \
-    apt-get install -y liblapack-dev && \
-    apt-get install -y libtool && \
-    apt-get install -y libopenmpi-dev && \
-    apt-get install -y libscotchparmetis-dev && \
-    apt-get install -y git 
+    apt-get install -y \
+	build-essential \
+   	gcc \
+	g++ \
+    	gfortran \
+    	make \
+    	cmake \
+    	bison \
+    	flex \
+    	libfftw3-dev \
+    	libsuitesparse-dev \
+    	libblas-dev \
+    	liblapack-dev \
+    	libtool 
+    
 
+# Need to fix this, libparametis not being found
+# ubuntu parallel libs	
+#RUN apt-get update && \
+    #apt-get install -y \
+	#libopenmpi-dev \
+	    #libparmetis-dev 
 
-# Trilinos source install 
+# install git for source cloning
+RUN apt-get update && \
+    apt-get install -y \
+	git	
+
+# tRILINOS SOURCE INSTALL 
 RUN mkdir trilinos_src && \
     cd trilinos_src && \
-    git clone -b trilinos-release-12-6-branch --single-branch https://github.com/trilinos/Trilinos.git .
- 
+    git clone -b trilinos-release-12-6-branch --single-branch https://github.com/trilinos/Trilinos.git . && \
+    cd ~
+
+
+RUN mkdir Trilinos12.6 
+
+ADD trilinos_cmake_serial.bash
+
+RUN ./trilinos_cmake_serial.bash
+RUN make
+RUN make install
+RUN cd ~
+
+#-----------------------------------------------
+# Begin Xyce Install 
+
+
+
+
+
+
+
