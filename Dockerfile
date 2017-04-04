@@ -64,8 +64,11 @@ RUN cd ~
 #-----------------------------------------------
 # Begin Xyce Install 
 
-ADD Xyce-6.6.tar.gz
-ADD Xyce_Docs-6.6.tar.gz
+ADD Xyce-6.6.tar.gz /root/Xyce-6.6.tar.gz
+ADD Xyce_Docs-6.6.tar.gz /root/Xyce_Docs-6.6.tar.gz
+
+
+
 
 
 
