@@ -1,14 +1,39 @@
-FROM queeno/ubuntu-desktop
+FROM ubuntu:16.04
 
-CMD /usr/bin/vncserver -kill :1 && \
-    rm /root/.vnc/xstartup
+ENV DEBIAN_FRONTEND noninteractive
+ENV USER root
 
+RUN apt-get update && \
+    apt-get install -y firefox && \
+    apt-get install -y lxde-core && \
+    apt-get install -y lxterminal && \
+    apt-get install -y tightvncserver && \
+    apt-get install -y xrdp && \
+    mkdir /root/.vnc
 
 ADD xstartup /root/.vnc/xstartup
+ADD passwd /root/.vnc/passwd
 
-CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
+RUN chmod 600 /root/.vnc/passwd
+
+CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1
+.log
 
 EXPOSE 5901
+
+
+
+#FROM queeno/ubuntu-desktop
+
+#CMD /usr/bin/vncserver -kill :1 && \
+    #rm /root/.vnc/xstartup
+
+
+#ADD xstartup /root/.vnc/xstartup
+
+#CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
+
+#EXPOSE 5901
 
 
 # ---------------------------------------------
