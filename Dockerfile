@@ -45,33 +45,27 @@ RUN apt-get update && \
     apt-get install -y \
 	git	
 
+
 # tRILINOS SOURCE INSTALL 
-RUN mkdir trilinos_src && \
-    cd trilinos_src && \
+RUN mkdir /root/trilinos_src && \
+    cd /root/trilinos_src && \
     git clone -b trilinos-release-12-6-branch --single-branch https://github.com/trilinos/Trilinos.git . && \
     cd ~
 
 
-RUN mkdir Trilinos12.6 
+RUN mkdir /root/Trilinos12.6 
 
-ADD trilinos_cmake_serial_amd64.bash 
-
-RUN ./trilinos_cmake_serial_amd64.bash
-RUN make
-RUN make install
-RUN cd ~
+ADD trilinos_cmake_serial_amd64.bash /root/Trilinos12.6/trilinos_cmake_serial_amd64.bash 
+RUN cd /root/Trilinos12.6/ && \
+   ./trilinos_cmake_serial_amd64.bash && \
+    make && \
+    make install
 
 #-----------------------------------------------
 # Begin Xyce Install 
 
 ADD Xyce-6.6.tar.gz /root/Xyce-6.6.tar.gz
 ADD Xyce_Docs-6.6.tar.gz /root/Xyce_Docs-6.6.tar.gz
-
-
-
-
-
-
 
 
 
