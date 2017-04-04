@@ -1,10 +1,19 @@
-FROM queeno/ubuntu-desktop
+FROM ubuntu:xenial
 
-CMD /usr/bin/vncserver -kill :1 && \
-    rm /root/.vnc/xstartup
+ENV DEBIAN_FRONTEND noninteractive
+ENV USER root
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ubuntu-desktop && \
+    apt-get install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal && \
+    apt-get install -y tightvncserver && \
+    apt-get install -y apt-utils && \
+    mkdir /root/.vnc
 
 ADD xstartup /root/.vnc/xstartup
+ADD passwd /root/.vnc/passwd
+
+RUN chmod 600 /root/.vnc/passwd
 
 CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
 
@@ -14,6 +23,7 @@ EXPOSE 5901
 # ---------------------------------------------
 # Everything after here is related to xyce install
 # 
+
 
 # Xyce install prerequisites
 RUN apt-get update && \
@@ -54,9 +64,9 @@ RUN mkdir trilinos_src && \
 
 RUN mkdir Trilinos12.6 
 
-ADD trilinos_cmake_serial_amd64.bash 
+ADD trilinos_cmake_serial.bash
 
-RUN ./trilinos_cmake_serial_amd64.bash
+RUN ./trilinos_cmake_serial.bash
 RUN make
 RUN make install
 RUN cd ~

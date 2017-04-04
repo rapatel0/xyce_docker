@@ -9,6 +9,8 @@ unset DBUS_SESSION_BUS_ADDRESS
 xsetroot -solid grey
 vncconfig -iconic &
 
+autocutsel -fork
+
 gnome-panel &
 gnome-settings-daemon &
 metacity &
