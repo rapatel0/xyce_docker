@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SRCDIR=$HOME/trilinos_src
-ARCHDIR=$HOME/XyceLibs/Serial
+SRCDIR=/root/trilinos-12.6.3-Source
+ARCHDIR=/root/XyceLibs/Serial
 FLAGS="-O3 -fPIC"
 
 cmake \

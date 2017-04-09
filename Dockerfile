@@ -1,46 +1,10 @@
-FROM ubuntu:16.04
+FROM queeno/ubuntu-desktop
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV USER root
+RUN apt-get update && apt-get install -y apt-utils autocutsel
 
-RUN apt-get update && \
-    apt-get install -y firefox && \
-    apt-get install -y lxde-core && \
-    apt-get install -y lxterminal && \
-    apt-get install -y tightvncserver && \
-    apt-get install -y xrdp && \
-    mkdir /root/.vnc
+CMD echo "autocutsel -fork &" >> /root/.vnc/xstartup
 
-ADD xstartup /root/.vnc/xstartup
-ADD passwd /root/.vnc/passwd
-
-RUN chmod 600 /root/.vnc/passwd
-
-CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1
-.log
-
-EXPOSE 5901
-
-
-
-#FROM queeno/ubuntu-desktop
-
-#CMD /usr/bin/vncserver -kill :1 && \
-    #rm /root/.vnc/xstartup
-
-
-#ADD xstartup /root/.vnc/xstartup
-
-#CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
-
-#EXPOSE 5901
-
-
-# ---------------------------------------------
-# Everything after here is related to xyce install
-# 
-
-# Xyce install prerequisites
+# Xyce install prerequisite
 RUN apt-get update && \
     apt-get install -y \
 	build-essential \
@@ -72,25 +36,41 @@ RUN apt-get update && \
 
 
 # tRILINOS SOURCE INSTALL 
-RUN mkdir /root/trilinos_src && \
-    cd /root/trilinos_src && \
-    git clone -b trilinos-release-12-6-branch --single-branch https://github.com/trilinos/Trilinos.git . && \
-    cd ~
+#RUN mkdir $HOME/trilinos_src && \
+    #cd  $HOME/trilinos_src && \
+    #git clone -b trilinos-release-12-6-branch --single-branch https://github.com/trilinos/Trilinos.git . && \
+    #cd ~
+
+ADD trilinos-12.6.3-Source.tar.bz2 /root/
+
+RUN mkdir  /root/Trilinos12.6 
+
+ADD trilinos_cmake_serial_amd64.bash  /root/Trilinos12.6/trilinos_cmake_serial_amd64.bash 
 
 
-RUN mkdir /root/Trilinos12.6 
 
-ADD trilinos_cmake_serial_amd64.bash /root/Trilinos12.6/trilinos_cmake_serial_amd64.bash 
-RUN cd /root/Trilinos12.6/ && \
-   ./trilinos_cmake_serial_amd64.bash && \
-    make && \
+RUN cd  /root/Trilinos12.6/ && \
+    chmod +x trilinos_cmake_serial_amd64.bash && \
+    ./trilinos_cmake_serial_amd64.bash &&\
+    make -j 4 && \
     make install
 
-#-----------------------------------------------
-# Begin Xyce Install 
+##-----------------------------------------------
+## Begin Xyce Install 
 
-ADD Xyce-6.6.tar.gz /root/Xyce-6.6.tar.gz
-ADD Xyce_Docs-6.6.tar.gz /root/Xyce_Docs-6.6.tar.gz
+ADD Xyce-6.6.tar.gz  /root/
+ADD Xyce_Docs-6.6.tar.gz  /root/
+CMD mkdir /root/xyce_build && \
+    cd /root/xyce_build && \
+    /root/Xyce-6.6/configure  \
+    CXXFLAGS="-O3 -std=c++11" \
+    ARCHDIR="/root/XyceLibs/Serial" \
+    CPPFLAGS="-I/usr/include/suitesparse" && \
+    make && \
+    sudo make install 
 
 
+CMD /usr/bin/vncserver -kill :1
+
+CMD /usr/bin/vncserver :1 -geometry 1280x800 -depth 24 && tail -f /root/.vnc/*:1.log
 

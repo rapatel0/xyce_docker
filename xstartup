@@ -1,18 +1,11 @@
 #!/bin/sh
 
-export XKL_XMODMAP_DISABLE=1
-unset SESSION_MANAGER
-unset DBUS_SESSION_BUS_ADDRESS
-
-[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+xrdb $HOME/.Xresources
 xsetroot -solid grey
-vncconfig -iconic &
-
+#x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+#x-window-manager &
+# Fix to make GNOME work
 autocutsel -fork
+export XKL_XMODMAP_DISABLE=1
+/etc/X11/Xsession
 
-gnome-panel &
-gnome-settings-daemon &
-metacity &
-nautilus &
-gnome-terminal &
