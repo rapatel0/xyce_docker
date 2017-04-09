@@ -52,21 +52,23 @@ ADD trilinos_cmake_serial_amd64.bash  /root/Trilinos12.6/trilinos_cmake_serial_a
 RUN cd  /root/Trilinos12.6/ && \
     chmod +x trilinos_cmake_serial_amd64.bash && \
     ./trilinos_cmake_serial_amd64.bash &&\
-    make -j 4 && \
+    make -j $(nproc) && \
     make install
 
 ##-----------------------------------------------
 ## Begin Xyce Install 
 
 ADD Xyce-6.6.tar.gz  /root/
+
 ADD Xyce_Docs-6.6.tar.gz  /root/
-CMD mkdir /root/xyce_build && \
-    cd /root/xyce_build && \
+
+RUN mkdir /root/xyce_build && \
+    cd /root/xyce_build && \ 
     /root/Xyce-6.6/configure  \
     CXXFLAGS="-O3 -std=c++11" \
     ARCHDIR="/root/XyceLibs/Serial" \
     CPPFLAGS="-I/usr/include/suitesparse" && \
-    make && \
+    make -j $(nproc) && \
     sudo make install 
 
 
